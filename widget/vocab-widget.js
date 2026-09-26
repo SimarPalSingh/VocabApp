@@ -347,10 +347,23 @@ async function createWidget(words, state) {
   const scriptName = Script.name() || "Lexicon";
   const runNextUrl = `scriptable:///run?scriptName=${encodeURIComponent(scriptName)}&action=next`;
 
+  const widgetFamily = config.widgetFamily || "medium";
+  const isLarge = widgetFamily === "large";
+  const isSmall = widgetFamily === "small";
+
   const widget = new ListWidget();
   widget.backgroundColor = THEME.bg;
-  widget.setPadding(14, 16, 14, 16);
-  // Tapping the widget body switches to next word
+
+  // Tailored padding for each widget size
+  if (isLarge) {
+    widget.setPadding(22, 22, 20, 22);
+  } else if (isSmall) {
+    widget.setPadding(12, 14, 12, 14);
+  } else {
+    widget.setPadding(14, 16, 14, 16);
+  }
+
+  // Tapping anywhere on the widget body switches to next word
   widget.url = runNextUrl;
 
   // Header Stack
@@ -359,66 +372,114 @@ async function createWidget(words, state) {
   headerStack.centerAlignContent();
 
   const brandText = headerStack.addText("LEXICON");
-  brandText.font = Font.boldSystemFont(10);
+  brandText.font = Font.boldSystemFont(isLarge ? 12 : 10);
   brandText.textColor = THEME.gold;
-  brandText.letterSpacing = 1.2;
+  brandText.letterSpacing = isLarge ? 1.5 : 1.2;
 
-  headerStack.addSpacer(6);
+  headerStack.addSpacer(isLarge ? 8 : 6);
 
   // Position counter (e.g. "3/20")
   const counterText = headerStack.addText(`${currentIndex + 1}/${words.length}`);
-  counterText.font = Font.mediumSystemFont(9);
+  counterText.font = Font.mediumSystemFont(isLarge ? 11 : 9);
   counterText.textColor = THEME.textMuted;
 
   headerStack.addSpacer();
 
   // Part of speech
   const posText = headerStack.addText((word.partOfSpeech || "word").toUpperCase());
-  posText.font = Font.mediumSystemFont(9);
+  posText.font = Font.mediumSystemFont(isLarge ? 11 : 9);
   posText.textColor = THEME.textMuted;
 
-  // Medium Widget: Interactive "Next ❯" Button Badge
-  if (config.widgetFamily !== "small") {
-    headerStack.addSpacer(8);
+  // Interactive "Next ❯" Button Badge (Medium & Large widgets)
+  if (!isSmall) {
+    headerStack.addSpacer(isLarge ? 12 : 8);
     const nextBtnStack = headerStack.addStack();
     nextBtnStack.layoutHorizontally();
     nextBtnStack.centerAlignContent();
     nextBtnStack.backgroundColor = THEME.cardBg;
-    nextBtnStack.cornerRadius = 5;
-    nextBtnStack.setPadding(2, 6, 2, 6);
+    nextBtnStack.cornerRadius = isLarge ? 6 : 5;
+    nextBtnStack.setPadding(isLarge ? 4 : 2, isLarge ? 8 : 6, isLarge ? 4 : 2, isLarge ? 8 : 6);
     nextBtnStack.url = runNextUrl;
 
     const nextBtnText = nextBtnStack.addText("Next ❯");
-    nextBtnText.font = Font.boldSystemFont(8.5);
+    nextBtnText.font = Font.boldSystemFont(isLarge ? 10.5 : 8.5);
     nextBtnText.textColor = THEME.gold;
   }
 
-  widget.addSpacer(6);
+  widget.addSpacer(isLarge ? 12 : 6);
 
-  // Main Word Term
+  // Main Word Term - scaled generously for readability
   const termText = widget.addText(word.term);
-  termText.font = new Font("Georgia-Bold", config.widgetFamily === "small" ? 19 : 23);
+  let termFontSize = 23;
+  if (isLarge) {
+    termFontSize = (word.term && word.term.length > 13) ? 30 : 36;
+  } else if (isSmall) {
+    termFontSize = (word.term && word.term.length > 10) ? 17 : 19;
+  }
+  termText.font = new Font("Georgia-Bold", termFontSize);
   termText.textColor = THEME.textPrimary;
   termText.lineLimit = 1;
 
   // Phonetic
   if (word.phonetic && word.phonetic.length > 0) {
-    widget.addSpacer(2);
+    widget.addSpacer(isLarge ? 4 : 2);
     const phoneticText = widget.addText(word.phonetic);
-    phoneticText.font = new Font("Georgia-Italic", 12);
+    phoneticText.font = new Font("Georgia-Italic", isLarge ? 16 : 12);
     phoneticText.textColor = THEME.textSecondary;
   }
 
-  widget.addSpacer(6);
+  widget.addSpacer(isLarge ? 12 : 6);
 
-  // Definition
+  // Definition - large, clear, high-contrast text
   const defText = widget.addText(word.definition);
-  defText.font = Font.systemFont(config.widgetFamily === "small" ? 10.5 : 12);
+  defText.font = Font.systemFont(isLarge ? 16.5 : (isSmall ? 10.5 : 12));
   defText.textColor = new Color("#cbd5e1");
-  defText.lineLimit = config.widgetFamily === "small" ? 2 : 3;
+  defText.lineLimit = isLarge ? 4 : (isSmall ? 2 : 3);
 
-  // Medium Widget Extra Details (Usage Sentence & Book)
-  if (config.widgetFamily !== "small") {
+  // Context & Quotes
+  if (isLarge) {
+    // Fill the large vertical canvas gracefully
+    widget.addSpacer();
+
+    if (word.sentence && word.sentence.length > 0) {
+      const quoteStack = widget.addStack();
+      quoteStack.layoutVertically();
+      quoteStack.backgroundColor = THEME.cardBg;
+      quoteStack.cornerRadius = 12;
+      quoteStack.setPadding(12, 14, 12, 14);
+      quoteStack.url = runNextUrl;
+
+      const quoteHeader = quoteStack.addText("💬 USAGE EXAMPLE");
+      quoteHeader.font = Font.boldSystemFont(10);
+      quoteHeader.textColor = THEME.gold;
+      quoteHeader.letterSpacing = 0.8;
+
+      quoteStack.addSpacer(5);
+
+      const quoteText = quoteStack.addText(`"${word.sentence}"`);
+      quoteText.font = new Font("Georgia-Italic", 15);
+      quoteText.textColor = new Color("#f8fafc");
+      quoteText.lineLimit = 4;
+
+      if (word.bookTitle && word.bookTitle.length > 0) {
+        quoteStack.addSpacer(8);
+        const bookText = quoteStack.addText(`📖 ${word.bookTitle}`);
+        bookText.font = Font.mediumSystemFont(12);
+        bookText.textColor = THEME.textMuted;
+      }
+    } else if (word.bookTitle && word.bookTitle.length > 0) {
+      const bookStack = widget.addStack();
+      bookStack.layoutHorizontally();
+      bookStack.centerAlignContent();
+      bookStack.backgroundColor = THEME.cardBg;
+      bookStack.cornerRadius = 8;
+      bookStack.setPadding(10, 14, 10, 14);
+      const bookText = bookStack.addText(`📖 Source: ${word.bookTitle}`);
+      bookText.font = Font.mediumSystemFont(13);
+      bookText.textColor = THEME.gold;
+    }
+  } else if (!isSmall) {
+    // Medium Widget Details
     if (word.sentence && word.sentence.length > 0) {
       widget.addSpacer(6);
       const quoteStack = widget.addStack();
@@ -448,7 +509,7 @@ async function createWidget(words, state) {
       bookText.textColor = THEME.textMuted;
     }
   } else {
-    // Small Widget: Compact sentence or book quote
+    // Small Widget Details
     if (word.sentence && word.sentence.length > 0) {
       widget.addSpacer(4);
       const smallQuote = widget.addText(`💬 "${word.sentence}"`);
@@ -507,10 +568,10 @@ async function run() {
       try {
         App.close();
       } catch (e) {
-        await widget.presentMedium();
+        await presentWidget(widget);
       }
     } else if (!config.runsInWidget) {
-      await widget.presentMedium();
+      await presentWidget(widget);
     }
     Script.complete();
     return;
@@ -535,6 +596,7 @@ async function run() {
     alert.message = `Word ${state.currentIndex + 1} of ${words.length}: "${currentWord.term}"\n\nRotates automatically every hour. Tap "Next Word" to switch manually.`;
     alert.addAction("⏭ Next Word");
     alert.addAction("⏮ Previous Word");
+    alert.addAction("📱 Preview Large Widget");
     alert.addAction("📱 Preview Medium Widget");
     alert.addAction("📱 Preview Small Widget");
     alert.addAction("🔄 Reset to First Word");
@@ -545,27 +607,33 @@ async function run() {
       advanceWordIndex(words, state, true);
       const w = await createWidget(words, state);
       Script.setWidget(w);
-      await w.presentMedium();
+      await presentWidget(w);
     } else if (choice === 1) {
       state.currentIndex = (state.currentIndex - 1 + words.length) % words.length;
       state.lastRotationTime = Date.now();
       saveState(state);
       const w = await createWidget(words, state);
       Script.setWidget(w);
-      await w.presentMedium();
+      await presentWidget(w);
     } else if (choice === 2) {
+      config.widgetFamily = "large";
+      const w = await createWidget(words, state);
+      await w.presentLarge();
+    } else if (choice === 3) {
+      config.widgetFamily = "medium";
       const w = await createWidget(words, state);
       await w.presentMedium();
-    } else if (choice === 3) {
+    } else if (choice === 4) {
+      config.widgetFamily = "small";
       const w = await createWidget(words, state);
       await w.presentSmall();
-    } else if (choice === 4) {
+    } else if (choice === 5) {
       state.currentIndex = 0;
       state.lastRotationTime = Date.now();
       saveState(state);
       const w = await createWidget(words, state);
       Script.setWidget(w);
-      await w.presentMedium();
+      await presentWidget(w);
     }
     Script.complete();
     return;
@@ -575,8 +643,18 @@ async function run() {
   advanceWordIndex(words, state, false);
   const widget = await createWidget(words, state);
   Script.setWidget(widget);
-  await widget.presentMedium();
+  await presentWidget(widget);
   Script.complete();
+}
+
+async function presentWidget(widget) {
+  if (config.widgetFamily === "large") {
+    await widget.presentLarge();
+  } else if (config.widgetFamily === "small") {
+    await widget.presentSmall();
+  } else {
+    await widget.presentMedium();
+  }
 }
 
 run();

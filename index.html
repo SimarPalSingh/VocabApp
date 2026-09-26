@@ -233,8 +233,35 @@
           <!-- Live Mock Preview of the Widget -->
           <div class="widget-preview-section">
             <div class="preview-tabs">
-              <button class="preview-tab-btn active" data-preview="medium">Medium Widget (With Example)</button>
+              <button class="preview-tab-btn" data-preview="large">Large Widget (Max Readability)</button>
+              <button class="preview-tab-btn active" data-preview="medium">Medium Widget</button>
               <button class="preview-tab-btn" data-preview="small">Small Widget</button>
+            </div>
+
+            <!-- Preview Card: Large -->
+            <div id="mockWidgetLarge" class="mock-widget large-widget hidden">
+              <div class="widget-top-bar">
+                <div class="widget-bar-left">
+                  <span class="widget-brand">LEXICON</span>
+                  <span class="widget-count" id="previewWordLargeCount">1/10</span>
+                </div>
+                <div class="widget-bar-right">
+                  <span class="widget-status" id="previewWordLargePos">adjective</span>
+                  <button type="button" class="widget-next-pill" id="mockNextBtnLarge" title="Simulate tapping Next on widget">Next ❯</button>
+                </div>
+              </div>
+              <div class="widget-main-term">
+                <h3 id="previewWordLargeTerm">Ineffable</h3>
+                <span class="widget-phonetic" id="previewWordLargePhonetic">/ɪnˈef.ə.bəl/</span>
+              </div>
+              <p class="widget-def" id="previewWordLargeDef">Too great or extreme to be expressed or described in words.</p>
+              <div class="widget-footer-context large-context">
+                <div class="widget-quote">
+                  <span class="widget-quote-label">💬 USAGE EXAMPLE</span>
+                  <span class="quote-text" id="previewWordLargeQuote">"The peace of the starlit fjord was an ineffable experience."</span>
+                  <span class="widget-book-badge" id="previewWordLargeBook">📖 The Ocean at the End of the Lane</span>
+                </div>
+              </div>
             </div>
 
             <!-- Preview Card: Medium -->
@@ -320,7 +347,7 @@
                   <li>Open <strong>Scriptable</strong> on your iPhone and tap <strong>+</strong> (new script).</li>
                   <li>Paste the copied script and name it <strong>"Lexicon"</strong>. Tap <em>Done</em>.</li>
                   <li>Go to your iPhone Home Screen, long-press any empty area, tap <strong>+</strong> in the top corner.</li>
-                  <li>Search for <strong>Scriptable</strong>, choose <strong>Medium</strong> or <strong>Small</strong> widget, and tap <strong>Add Widget</strong>.</li>
+                  <li>Search for <strong>Scriptable</strong>, choose <strong>Large</strong>, <strong>Medium</strong>, or <strong>Small</strong> widget, and tap <strong>Add Widget</strong>.</li>
                   <li>Long-press the new widget -> <strong>Edit Widget</strong> -> Set Script to <strong>"Lexicon"</strong>. Done! 🎉</li>
                 </ol>
               </div>

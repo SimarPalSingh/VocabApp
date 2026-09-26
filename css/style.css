@@ -930,6 +930,76 @@ textarea {
   overflow: hidden;
 }
 
+.large-widget {
+  width: 100%;
+  max-width: 360px;
+  min-height: 360px;
+  padding: 22px 20px;
+  justify-content: space-between;
+}
+
+.large-widget .widget-top-bar {
+  font-size: 0.75rem;
+}
+
+.large-widget .widget-brand {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.large-widget .widget-count {
+  font-size: 0.72rem;
+}
+
+.large-widget .widget-status {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+}
+
+.large-widget .widget-next-pill {
+  font-size: 0.7rem;
+  padding: 3px 9px;
+}
+
+.large-widget .widget-main-term h3 {
+  font-size: 2.2rem;
+  line-height: 1.15;
+}
+
+.large-widget .widget-phonetic {
+  font-size: 1rem;
+}
+
+.large-widget .widget-def {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin: 12px 0 16px 0;
+}
+
+.large-widget .large-context {
+  margin-top: auto;
+}
+
+.large-widget .widget-quote {
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.large-widget .widget-quote-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+
+.large-widget .quote-text {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 6px 0 10px 0;
+}
+
+.large-widget .widget-book-badge {
+  font-size: 0.75rem;
+}
+
 .medium-widget {
   width: 100%;
   max-width: 360px;

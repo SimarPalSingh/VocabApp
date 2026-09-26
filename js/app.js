@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Widget Mock & Setup
   const previewTabBtns = document.querySelectorAll('.preview-tab-btn');
+  const mockWidgetLarge = document.getElementById('mockWidgetLarge');
   const mockWidgetMedium = document.getElementById('mockWidgetMedium');
   const mockWidgetSmall = document.getElementById('mockWidgetSmall');
   const cyclePreviewBtn = document.getElementById('cyclePreviewBtn');
@@ -494,6 +495,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const smallCountEl = document.getElementById('previewWordSmallCount');
     if (smallCountEl) smallCountEl.textContent = countText;
 
+    // Large Widget Preview
+    const largeTermEl = document.getElementById('previewWordLargeTerm');
+    if (largeTermEl) {
+      largeTermEl.textContent = targetWord.term;
+      document.getElementById('previewWordLargePhonetic').textContent = targetWord.phonetic || '';
+      document.getElementById('previewWordLargePos').textContent = (targetWord.partOfSpeech || 'word').toUpperCase();
+      document.getElementById('previewWordLargeDef').textContent = targetWord.definition;
+      document.getElementById('previewWordLargeQuote').textContent = targetWord.sentence ? `"${targetWord.sentence}"` : '"Encountered while reading..."';
+      document.getElementById('previewWordLargeBook').textContent = `📖 ${targetWord.bookTitle || 'Reading List'}`;
+      const largeCountEl = document.getElementById('previewWordLargeCount');
+      if (largeCountEl) largeCountEl.textContent = countText;
+    }
+
     // Medium Widget Preview
     document.getElementById('previewWordTerm').textContent = targetWord.term;
     document.getElementById('previewWordPhonetic').textContent = targetWord.phonetic || '';
@@ -709,11 +723,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.add('active');
         const previewType = btn.getAttribute('data-preview');
         if (previewType === 'small') {
-          mockWidgetSmall.classList.remove('hidden');
-          mockWidgetMedium.classList.add('hidden');
+          mockWidgetSmall?.classList.remove('hidden');
+          mockWidgetMedium?.classList.add('hidden');
+          mockWidgetLarge?.classList.add('hidden');
+        } else if (previewType === 'large') {
+          mockWidgetSmall?.classList.add('hidden');
+          mockWidgetMedium?.classList.add('hidden');
+          mockWidgetLarge?.classList.remove('hidden');
         } else {
-          mockWidgetSmall.classList.add('hidden');
-          mockWidgetMedium.classList.remove('hidden');
+          mockWidgetSmall?.classList.add('hidden');
+          mockWidgetMedium?.classList.remove('hidden');
+          mockWidgetLarge?.classList.add('hidden');
         }
       });
     });
@@ -726,6 +746,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const mockNextBtn = document.getElementById('mockNextBtn');
     if (mockNextBtn) {
       mockNextBtn.addEventListener('click', () => {
+        previewWordIndex++;
+        updateMockWidget();
+      });
+    }
+
+    const mockNextBtnLarge = document.getElementById('mockNextBtnLarge');
+    if (mockNextBtnLarge) {
+      mockNextBtnLarge.addEventListener('click', () => {
         previewWordIndex++;
         updateMockWidget();
       });
