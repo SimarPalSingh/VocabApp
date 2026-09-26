@@ -94,7 +94,7 @@
           </div>
           <div class="banner-text">
             <strong><span id="activeWidgetCount">0</span> words in Widget Rotation</strong>
-            <p>These appear randomly on your iPhone Home Screen widget throughout the day.</p>
+            <p>These rotate automatically every hour on your iPhone widget, or instantly whenever you tap it.</p>
           </div>
           <button id="quickAddTriggerBtn" class="btn-sm btn-primary">+ Add New</button>
         </div>
@@ -240,8 +240,14 @@
             <!-- Preview Card: Medium -->
             <div id="mockWidgetMedium" class="mock-widget medium-widget">
               <div class="widget-top-bar">
-                <span class="widget-brand">LEXICON</span>
-                <span class="widget-status" id="previewWordPos">adjective</span>
+                <div class="widget-bar-left">
+                  <span class="widget-brand">LEXICON</span>
+                  <span class="widget-count" id="previewWordCount">1/10</span>
+                </div>
+                <div class="widget-bar-right">
+                  <span class="widget-status" id="previewWordPos">adjective</span>
+                  <button type="button" class="widget-next-pill" id="mockNextBtn" title="Simulate tapping Next on widget">Next ❯</button>
+                </div>
               </div>
               <div class="widget-main-term">
                 <h3 id="previewWordTerm">Ineffable</h3>
@@ -261,6 +267,7 @@
             <div id="mockWidgetSmall" class="mock-widget small-widget hidden">
               <div class="widget-top-bar">
                 <span class="widget-brand">LEXICON</span>
+                <span class="widget-count" id="previewWordSmallCount">1/10</span>
                 <span class="widget-tag" id="previewWordSmallPos">adj.</span>
               </div>
               <h3 id="previewWordSmallTerm">Ineffable</h3>
@@ -318,6 +325,16 @@
                 </ol>
               </div>
             </div>
+
+            <div class="step-card highlight-step">
+              <div class="step-num">★</div>
+              <div class="step-details">
+                <strong>How Rotation & Manual Switching Works</strong>
+                <p><strong>⏱️ Hourly Auto-Rotation:</strong> The widget automatically cycles to the next word in your library every hour so you absorb words throughout the day without repeats.</p>
+                <p><strong>👆 Tap to Switch Anytime:</strong> Tap the widget or the <strong>"Next ❯"</strong> button on your Home Screen to immediately advance to the next word!</p>
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </section>

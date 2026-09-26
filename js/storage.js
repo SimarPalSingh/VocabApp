@@ -53,7 +53,7 @@ const StorageService = {
       definition: 'A soft, whispering, or rustling sound.',
       bookTitle: 'The Secret History',
       sentence: 'Beyond the tall French windows, a gentle susurrus of autumn leaves brushed against the stone terrace.',
-      status: 'familiar',
+      status: 'active',
       dateAdded: new Date(Date.now() - 86400000 * 8).toISOString(),
       audioUrl: ''
     },
@@ -65,8 +65,68 @@ const StorageService = {
       definition: 'Lasting for a very short time; transitory; fleeting.',
       bookTitle: 'The Great Gatsby',
       sentence: 'The fireworks bloomed over the bay, an ephemeral glory that faded before the smoke cleared.',
-      status: 'mastered',
+      status: 'active',
+      dateAdded: new Date(Date.now() - 86400000 * 10).toISOString(),
+      audioUrl: ''
+    },
+    {
+      id: 'word-6',
+      term: 'Mellifluous',
+      phonetic: '/məˈlɪf.lu.əs/',
+      partOfSpeech: 'adjective',
+      definition: 'Pleasingly smooth and musical to hear.',
+      bookTitle: 'The Song of Achilles',
+      sentence: 'Her voice had a mellifluous cadence that turned even mundane sentences into melody.',
+      status: 'active',
       dateAdded: new Date(Date.now() - 86400000 * 12).toISOString(),
+      audioUrl: ''
+    },
+    {
+      id: 'word-7',
+      term: 'Halcyon',
+      phonetic: '/ˈhæl.si.ən/',
+      partOfSpeech: 'adjective',
+      definition: 'Denoting a period of time in the past that was idyllically peaceful and happy.',
+      bookTitle: 'Atonement',
+      sentence: 'They reminisced about the halcyon days of youth, before shadows fell over Europe.',
+      status: 'active',
+      dateAdded: new Date(Date.now() - 86400000 * 14).toISOString(),
+      audioUrl: ''
+    },
+    {
+      id: 'word-8',
+      term: 'Serendipity',
+      phonetic: '/ˌser.ənˈdɪp.ə.ti/',
+      partOfSpeech: 'noun',
+      definition: 'The occurrence of valuable discoveries by chance in a happy way.',
+      bookTitle: 'The Shadow of the Wind',
+      sentence: 'Finding that inscribed volume in the Cemetery of Forgotten Books was pure serendipity.',
+      status: 'active',
+      dateAdded: new Date(Date.now() - 86400000 * 16).toISOString(),
+      audioUrl: ''
+    },
+    {
+      id: 'word-9',
+      term: 'Vellichor',
+      phonetic: '/ˈvel.ɪ.kɔːr/',
+      partOfSpeech: 'noun',
+      definition: 'The strange wistfulness of used bookshops, suffused with passage of time.',
+      bookTitle: 'The Storied Life of A.J. Fikry',
+      sentence: 'He breathed in the warm vellichor of the antiquarian shelves, surrounded by forgotten thoughts.',
+      status: 'familiar',
+      dateAdded: new Date(Date.now() - 86400000 * 18).toISOString(),
+      audioUrl: ''
+    },
+    {
+      id: 'word-10',
+      term: 'Nefarious',
+      phonetic: '/nəˈfeə.ri.əs/',
+      partOfSpeech: 'adjective',
+      definition: 'Wicked, villainous, or criminal.',
+      bookTitle: 'The Count of Monte Cristo',
+      sentence: 'Behind the prosecutor’s respectable facade lay a nefarious ambition that ruined innocent men.',
+      status: 'mastered',
+      dateAdded: new Date(Date.now() - 86400000 * 20).toISOString(),
       audioUrl: ''
     }
   ],
@@ -183,12 +243,13 @@ const StorageService = {
     }
 
     const words = this.getWords();
+    const activeList = words.filter(w => w.status === 'active');
     // Payload for the widget: includes all words and a filtered active list
     const payload = {
       updatedAt: new Date().toISOString(),
       appName: 'Lexicon Vault',
       totalWords: words.length,
-      activeWords: words.filter(w => w.status === 'active'),
+      activeWords: activeList.length > 0 ? activeList : words,
       allWords: words
     };
 

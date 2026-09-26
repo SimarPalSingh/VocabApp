@@ -960,6 +960,55 @@ textarea {
   font-family: var(--text-brand);
 }
 
+.widget-bar-left,
+.widget-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.widget-count {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.widget-next-pill {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--accent-gold);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.widget-next-pill:hover {
+  background: rgba(245, 158, 11, 0.28);
+  border-color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.widget-next-pill:active {
+  transform: translateY(0);
+}
+
+.highlight-step {
+  border-left: 3px solid var(--accent-gold);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.highlight-step .step-num {
+  background: var(--accent-gold);
+  color: #0f1117;
+  font-weight: 900;
+}
+
 .widget-status {
   text-transform: uppercase;
   font-size: 0.62rem;

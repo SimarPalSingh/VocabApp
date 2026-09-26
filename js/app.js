@@ -481,8 +481,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // WIDGET MOCK & PREVIEW
   // ==========================================
   function updateMockWidget() {
-    const words = StorageService.getWords().filter(w => w.status === 'active');
-    const targetWord = (words.length > 0) ? words[previewWordIndex % words.length] : StorageService.DEFAULT_WORDS[0];
+    const activeWords = StorageService.getWords().filter(w => w.status === 'active');
+    const wordList = (activeWords.length > 0) ? activeWords : StorageService.getWords();
+    const total = wordList.length || 1;
+    const currentIndex = ((previewWordIndex % total) + total) % total;
+    const targetWord = wordList[currentIndex] || StorageService.DEFAULT_WORDS[0];
+
+    // Word counter
+    const countText = `${currentIndex + 1}/${total}`;
+    const countEl = document.getElementById('previewWordCount');
+    if (countEl) countEl.textContent = countText;
+    const smallCountEl = document.getElementById('previewWordSmallCount');
+    if (smallCountEl) smallCountEl.textContent = countText;
 
     // Medium Widget Preview
     document.getElementById('previewWordTerm').textContent = targetWord.term;
@@ -712,6 +722,14 @@ document.addEventListener('DOMContentLoaded', () => {
       previewWordIndex++;
       updateMockWidget();
     });
+
+    const mockNextBtn = document.getElementById('mockNextBtn');
+    if (mockNextBtn) {
+      mockNextBtn.addEventListener('click', () => {
+        previewWordIndex++;
+        updateMockWidget();
+      });
+    }
 
     copyScriptableBtn.addEventListener('click', copyScriptableCode);
 
