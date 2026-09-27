@@ -43,14 +43,15 @@ Since Apple does not permit web apps to create widgets natively, we use the free
    - Go to your iPhone Home Screen and long-press on any empty area until the icons jiggle.
    - Tap the **+** in the top corner to open the iOS Widget Gallery.
    - Search for **Scriptable**.
-   - Select either the **Medium** or **Small** widget and tap **Add Widget**.
+   - Select either the **Large**, **Medium**, or **Small** widget and tap **Add Widget** (Large is recommended for rich definitions, quote cards, and pronunciation buttons).
    - Long-press your new widget → **Edit Widget** → set the Script to **"Lexicon"**.
 
 5. **Rotation & Controls**:
-   - ⏱️ **Automatic 1-Hour Rotation**: The widget smoothly cycles sequentially through all words in your library every hour so you absorb your entire reading list without getting stuck repeating the same words.
-   - 👆 **Manual Switching Anytime**: Tap the widget or the **"Next ❯"** button right on your Home Screen to immediately advance to the next word on demand!
-   - 📱 **Interactive In-App Menu**: Tapping the script inside the Scriptable app allows you to browse words (Next, Previous, Reset to First Word, or Preview Small/Medium).
-   - 📶 **Offline Resilience**: Synced words are cached in local iPhone storage so your widget keeps rotating smoothly even without internet connectivity.
+   - ⏱️ **Automatic 1-Hour Rotation**: The widget smoothly cycles sequentially through all words in your library every hour so you absorb your entire reading list without getting stuck repeating words.
+   - 🔊 **Instant Pronunciation**: Tap the **"🔊 Speak"** button on the widget to hear the native pronunciation aloud using iOS Siri speech without changing the word.
+   - 👆 **Next Word Anytime**: Tap the **"Next ❯"** button right on your Home Screen to immediately advance to the next word on demand.
+   - 📱 **Interactive In-App Menu**: Running the script inside Scriptable allows you to pronounce words, browse back/forth, or preview Large/Medium/Small widget cards.
+   - 📶 **Offline Resilience**: Synced words are cached in local iPhone storage so your widget keeps rotating and speaking smoothly even without internet connectivity.
 
 That's it! Your widget will now showcase your words, complete with definitions and your book quotes.
 

@@ -1044,6 +1044,37 @@ textarea {
   letter-spacing: 0.04em;
 }
 
+.widget-speak-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.widget-speak-pill:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.widget-speak-pill:active {
+  transform: translateY(0);
+}
+
+.large-widget .widget-speak-pill {
+  font-size: 0.7rem;
+  padding: 3px 9px;
+}
+
 .widget-next-pill {
   background: rgba(245, 158, 11, 0.15);
   border: 1px solid rgba(245, 158, 11, 0.3);

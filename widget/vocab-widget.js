@@ -10,9 +10,9 @@
  * 1. Automatic 1-Hour Sequential Rotation:
  *    Rotates through your library in order every hour so you never get stuck
  *    repeating the same 2 words.
- * 2. Instant Manual Switch:
- *    Tap the widget (or the "Next ❯" button) on your Home Screen to immediately
- *    advance to the next word.
+ * 2. Dedicated "🔊 Speak" & "Next ❯" Buttons:
+ *    Tap "🔊 Speak" to pronounce the current word aloud using iOS Siri speech
+ *    without advancing. Tap "Next ❯" to advance to the next word.
  * 3. Offline Caching:
  *    Synced words are cached locally via FileManager so your widget keeps working
  *    even without internet.
@@ -346,8 +346,9 @@ async function createWidget(words, state) {
   const word = words[currentIndex] || FALLBACK_WORDS[0];
   const scriptName = Script.name() || "Lexicon";
   const runNextUrl = `scriptable:///run?scriptName=${encodeURIComponent(scriptName)}&action=next`;
+  const runSpeakUrl = `scriptable:///run?scriptName=${encodeURIComponent(scriptName)}&action=speak`;
 
-  const widgetFamily = config.widgetFamily || "medium";
+  const widgetFamily = config.widgetFamily || "large";
   const isLarge = widgetFamily === "large";
   const isSmall = widgetFamily === "small";
 
@@ -359,12 +360,11 @@ async function createWidget(words, state) {
     widget.setPadding(22, 22, 20, 22);
   } else if (isSmall) {
     widget.setPadding(12, 14, 12, 14);
+    // Small widgets only permit one root URL
+    widget.url = runNextUrl;
   } else {
     widget.setPadding(14, 16, 14, 16);
   }
-
-  // Tapping anywhere on the widget body switches to next word
-  widget.url = runNextUrl;
 
   // Header Stack
   const headerStack = widget.addStack();
@@ -390,15 +390,32 @@ async function createWidget(words, state) {
   posText.font = Font.mediumSystemFont(isLarge ? 11 : 9);
   posText.textColor = THEME.textMuted;
 
-  // Interactive "Next ❯" Button Badge (Medium & Large widgets)
+  // Interactive Buttons: Pronounce (Speak) & Next Word
   if (!isSmall) {
     headerStack.addSpacer(isLarge ? 12 : 8);
+
+    // 1. Pronounce Button (Speaks current word without advancing)
+    const speakBtnStack = headerStack.addStack();
+    speakBtnStack.layoutHorizontally();
+    speakBtnStack.centerAlignContent();
+    speakBtnStack.backgroundColor = THEME.cardBg;
+    speakBtnStack.cornerRadius = isLarge ? 6 : 5;
+    speakBtnStack.setPadding(isLarge ? 4 : 2.5, isLarge ? 9 : 7, isLarge ? 4 : 2.5, isLarge ? 7 : 6);
+    speakBtnStack.url = runSpeakUrl;
+
+    const speakBtnText = speakBtnStack.addText(isLarge ? "🔊 Speak" : "🔊");
+    speakBtnText.font = Font.boldSystemFont(isLarge ? 10.5 : 9);
+    speakBtnText.textColor = THEME.gold;
+
+    headerStack.addSpacer(isLarge ? 6 : 5);
+
+    // 2. Next Button (Advances to next word)
     const nextBtnStack = headerStack.addStack();
     nextBtnStack.layoutHorizontally();
     nextBtnStack.centerAlignContent();
     nextBtnStack.backgroundColor = THEME.cardBg;
     nextBtnStack.cornerRadius = isLarge ? 6 : 5;
-    nextBtnStack.setPadding(isLarge ? 4 : 2, isLarge ? 8 : 6, isLarge ? 4 : 2, isLarge ? 8 : 6);
+    nextBtnStack.setPadding(isLarge ? 4 : 2.5, isLarge ? 9 : 7, isLarge ? 4 : 2.5, isLarge ? 7 : 6);
     nextBtnStack.url = runNextUrl;
 
     const nextBtnText = nextBtnStack.addText("Next ❯");
@@ -539,11 +556,55 @@ async function run() {
   const words = await loadActiveWords();
   const state = loadState();
 
-  // Check if triggered manually (tap on widget or parameter)
+  // Check if triggered manually (tap on widget buttons or parameter)
+  const isSpeakAction =
+    (args.queryParameters && (args.queryParameters.action === "speak" || args.queryParameters.action === "pronounce"));
+
   const isNextAction =
     (args.queryParameters && (args.queryParameters.action === "next" || args.queryParameters.next === "true")) ||
     (args.widgetParameter && args.widgetParameter.trim().toLowerCase() === "next");
 
+  // 1. Pronounce Current Word Action (Without advancing)
+  if (isSpeakAction) {
+    const currentWord = words[state.currentIndex % words.length] || FALLBACK_WORDS[0];
+
+    // Trigger native iOS speech synthesis
+    try {
+      Speech.speak(currentWord.term);
+    } catch (err) {
+      console.log("Speech synthesis error: " + err);
+    }
+
+    // Optional quick notification confirmation
+    try {
+      const notif = new Notification();
+      notif.title = `🔊 Pronouncing: ${currentWord.term}`;
+      notif.body = `${currentWord.phonetic ? currentWord.phonetic + " • " : ""}${currentWord.definition}`;
+      await notif.schedule();
+    } catch (e) {
+      // Notification permission optional
+    }
+
+    // Brief pause to allow the iOS speech engine to start before closing
+    await sleep(1300);
+
+    // Auto-close Scriptable and return to Home Screen
+    if (typeof App !== "undefined" && typeof App.close === "function") {
+      try {
+        App.close();
+      } catch (e) {
+        const widget = await createWidget(words, state);
+        await presentWidget(widget);
+      }
+    } else if (!config.runsInWidget) {
+      const widget = await createWidget(words, state);
+      await presentWidget(widget);
+    }
+    Script.complete();
+    return;
+  }
+
+  // 2. Next Word Action
   if (isNextAction) {
     // Advance index immediately
     advanceWordIndex(words, state, true);
@@ -593,7 +654,8 @@ async function run() {
 
     const alert = new Alert();
     alert.title = "Lexicon Vault";
-    alert.message = `Word ${state.currentIndex + 1} of ${words.length}: "${currentWord.term}"\n\nRotates automatically every hour. Tap "Next Word" to switch manually.`;
+    alert.message = `Word ${state.currentIndex + 1} of ${words.length}: "${currentWord.term}"\n\nRotates automatically every hour. Tap "Speak" to pronounce or "Next" to advance.`;
+    alert.addAction("🔊 Pronounce Current Word");
     alert.addAction("⏭ Next Word");
     alert.addAction("⏮ Previous Word");
     alert.addAction("📱 Preview Large Widget");
@@ -604,30 +666,36 @@ async function run() {
 
     const choice = await alert.presentSheet();
     if (choice === 0) {
+      try {
+        Speech.speak(currentWord.term);
+      } catch (err) {}
+      const w = await createWidget(words, state);
+      await presentWidget(w);
+    } else if (choice === 1) {
       advanceWordIndex(words, state, true);
       const w = await createWidget(words, state);
       Script.setWidget(w);
       await presentWidget(w);
-    } else if (choice === 1) {
+    } else if (choice === 2) {
       state.currentIndex = (state.currentIndex - 1 + words.length) % words.length;
       state.lastRotationTime = Date.now();
       saveState(state);
       const w = await createWidget(words, state);
       Script.setWidget(w);
       await presentWidget(w);
-    } else if (choice === 2) {
+    } else if (choice === 3) {
       config.widgetFamily = "large";
       const w = await createWidget(words, state);
       await w.presentLarge();
-    } else if (choice === 3) {
+    } else if (choice === 4) {
       config.widgetFamily = "medium";
       const w = await createWidget(words, state);
       await w.presentMedium();
-    } else if (choice === 4) {
+    } else if (choice === 5) {
       config.widgetFamily = "small";
       const w = await createWidget(words, state);
       await w.presentSmall();
-    } else if (choice === 5) {
+    } else if (choice === 6) {
       state.currentIndex = 0;
       state.lastRotationTime = Date.now();
       saveState(state);
@@ -645,6 +713,16 @@ async function run() {
   Script.setWidget(widget);
   await presentWidget(widget);
   Script.complete();
+}
+
+function sleep(ms) {
+  return new Promise(resolve => {
+    if (typeof Timer !== "undefined" && typeof Timer.schedule === "function") {
+      Timer.schedule(ms, false, resolve);
+    } else {
+      setTimeout(resolve, ms);
+    }
+  });
 }
 
 async function presentWidget(widget) {

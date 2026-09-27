@@ -759,6 +759,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    const speakCurrentPreviewWord = () => {
+      const activeWords = StorageService.getWords().filter(w => w.status === 'active');
+      const wordList = (activeWords.length > 0) ? activeWords : StorageService.getWords();
+      const total = wordList.length || 1;
+      const currentIndex = ((previewWordIndex % total) + total) % total;
+      const targetWord = wordList[currentIndex] || StorageService.DEFAULT_WORDS[0];
+      if (targetWord) {
+        speakWithSynthesis(targetWord.term);
+      }
+    };
+
+    const mockSpeakBtnLarge = document.getElementById('mockSpeakBtnLarge');
+    if (mockSpeakBtnLarge) {
+      mockSpeakBtnLarge.addEventListener('click', speakCurrentPreviewWord);
+    }
+
+    const mockSpeakBtnMedium = document.getElementById('mockSpeakBtnMedium');
+    if (mockSpeakBtnMedium) {
+      mockSpeakBtnMedium.addEventListener('click', speakCurrentPreviewWord);
+    }
+
     copyScriptableBtn.addEventListener('click', copyScriptableCode);
 
     // Settings
